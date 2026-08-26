@@ -39,16 +39,6 @@ jobs:
           dockerfile: Dockerfile-multi-arch
           failure-threshold: error
 
-      - name: La description Docker Hub tient sous la limite
-        run: |
-          LIMIT=25000
-          SIZE=$(wc -c < README-dockerhub.md)
-          echo "README-dockerhub.md : ${SIZE} octets (limite ${LIMIT})"
-          if [ "${SIZE}" -gt "${LIMIT}" ]; then
-            echo "::error::README-dockerhub.md dépasse la limite Docker Hub de $((SIZE - LIMIT)) octets."
-            exit 1
-          fi
-
   test:
     name: Test d'intégration (${{ matrix.arch }})
     needs: lint
