@@ -12,7 +12,7 @@
     </td>
     <td align="center" width="50%">
       <a href="https://hub.docker.com/r/samtechlab/alpine-3.23" target="_blank">
-        <img src="https://raw.githubusercontent.com/Sam-Tech-Lab-OSS/Images/refs/heads/main/Alpine-logo.png?sanitize=true"
+        <img src="https://raw.githubusercontent.com/Sam-Tech-Lab-Git/Images/refs/heads/main/Alpine-logo.png?sanitize=true"
              alt="Alpine Logo" width="180"/>
       </a>
     </td>
