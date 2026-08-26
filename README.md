@@ -12,7 +12,7 @@
     </td>
     <td align="center" width="50%">
       <a href="https://hub.docker.com/r/samtechlab/alpine-3.23" target="_blank">
-        <img src="https://raw.githubusercontent.com/Sam-Tech-Lab-Git/Images/refs/heads/main/Alpine-logo.png?sanitize=true"
+        <img src="https://raw.githubusercontent.com/Sam-Tech-Lab-OSS/Images/refs/heads/main/Alpine-logo.png?sanitize=true"
              alt="Alpine Logo" width="180"/>
       </a>
     </td>
@@ -35,14 +35,14 @@
   <a href="https://github.com/sponsors/Sam-Tech-Lab-OSS" target="_blank">
     <img src="https://img.shields.io/badge/Sponsor-GitHub-ea4aaa.svg?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="Sponsor"/>
   </a>
-  <a href="https://github.com/Sam-Tech-Lab-Git/Docker-Alpine-3.23/blob/main/LICENSE" target="_blank">
+  <a href="https://github.com/Sam-Tech-Lab-OSS/Docker-Alpine-3.23/blob/main/LICENSE" target="_blank">
     <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge" alt="License: Apache 2.0"/>
   </a>
-  <a href="https://github.com/Sam-Tech-Lab-Git/Docker-Alpine-3.23/actions/workflows/build-multi-arch.yml" target="_blank">
-      <img src="https://github.com/Sam-Tech-Lab-Git/Docker-Alpine-3.23/actions/workflows/build-multi-arch.yml/badge.svg" alt="Build multi-arch"/>
+  <a href="https://github.com/Sam-Tech-Lab-OSS/Docker-Alpine-3.23/actions/workflows/build-multi-arch.yml" target="_blank">
+      <img src="https://github.com/Sam-Tech-Lab-OSS/Docker-Alpine-3.23/actions/workflows/build-multi-arch.yml/badge.svg" alt="Build multi-arch"/>
   </a>
-  <a href="https://github.com/Sam-Tech-Lab-Git/Docker-Alpine-3.23/actions/workflows/vuln-scan.yml" target="_blank">
-      <img src="https://github.com/Sam-Tech-Lab-Git/Docker-Alpine-3.23/actions/workflows/vuln-scan.yml/badge.svg" alt="Vulnerability Scan"/>
+  <a href="https://github.com/Sam-Tech-Lab-OSS/Docker-Alpine-3.23/actions/workflows/vuln-scan.yml" target="_blank">
+      <img src="https://github.com/Sam-Tech-Lab-OSS/Docker-Alpine-3.23/actions/workflows/vuln-scan.yml/badge.svg" alt="Vulnerability Scan"/>
   </a>
 </p>
 
@@ -56,7 +56,7 @@
 
 ```bash
 # Run a shell (as the unprivileged appuser)
-docker run -it --rm ghcr.io/sam-tech-lab-git/alpine-3.23:latest
+docker run -it --rm ghcr.io/sam-tech-lab-oss/alpine-3.23:latest
 
 # Or from Docker Hub
 docker run -it --rm samtechlab/alpine-3.23:latest
@@ -65,7 +65,7 @@ docker run -it --rm samtechlab/alpine-3.23:latest
 Build on top of it:
 
 ```dockerfile
-FROM ghcr.io/sam-tech-lab-git/alpine-3.23:latest
+FROM ghcr.io/sam-tech-lab-oss/alpine-3.23:latest
 
 # The image runs as appuser; switch to root to install, then switch back.
 USER root
@@ -119,8 +119,8 @@ and a hardened system baseline — then it gets out of your way.
 |---|---|---|
 | Docker Hub | `samtechlab/alpine-3.23:latest` | amd64 + arm64 |
 | Docker Hub | `samtechlab/alpine-3.23:YYYY.MM` | amd64 + arm64 |
-| GHCR | `ghcr.io/sam-tech-lab-git/alpine-3.23:latest` | amd64 + arm64 |
-| GHCR | `ghcr.io/sam-tech-lab-git/alpine-3.23:YYYY.MM` | amd64 + arm64 |
+| GHCR | `ghcr.io/sam-tech-lab-oss/alpine-3.23:latest` | amd64 + arm64 |
+| GHCR | `ghcr.io/sam-tech-lab-oss/alpine-3.23:YYYY.MM` | amd64 + arm64 |
 
 Tags point at a multi-architecture manifest — Docker automatically selects the right image for
 the host platform. `latest` tracks the monthly rebuild.
@@ -181,7 +181,7 @@ For a genuinely fixed image, **pin by digest** — see
 ### Run a container
 
 ```bash
-docker run -it --rm ghcr.io/sam-tech-lab-git/alpine-3.23:latest
+docker run -it --rm ghcr.io/sam-tech-lab-oss/alpine-3.23:latest
 ```
 
 You get a `bash` shell as `appuser`. There is no root process in the container.
@@ -192,7 +192,7 @@ The image ends with `USER appuser`, so **any derived image must switch back to `
 packages**, then drop privileges again:
 
 ```dockerfile
-FROM ghcr.io/sam-tech-lab-git/alpine-3.23:latest
+FROM ghcr.io/sam-tech-lab-oss/alpine-3.23:latest
 
 USER root
 RUN apk add --no-cache nginx
@@ -215,13 +215,13 @@ processes and handle signals itself. A process that does neither leaves zombies 
 If your process is not designed for that role, let Docker supply a minimal init:
 
 ```bash
-docker run --init ghcr.io/sam-tech-lab-git/alpine-3.23:latest your-command
+docker run --init ghcr.io/sam-tech-lab-oss/alpine-3.23:latest your-command
 ```
 
 ```yaml
 services:
   app:
-    image: ghcr.io/sam-tech-lab-git/alpine-3.23:latest
+    image: ghcr.io/sam-tech-lab-oss/alpine-3.23:latest
     init: true
 ```
 
@@ -237,7 +237,7 @@ port below 1024 and cannot write to its usual runtime locations — hence the ad
 
 `Dockerfile`
 ```dockerfile
-FROM ghcr.io/sam-tech-lab-git/alpine-3.23:latest
+FROM ghcr.io/sam-tech-lab-oss/alpine-3.23:latest
 
 USER root
 RUN apk add --no-cache nginx && \
@@ -308,7 +308,7 @@ Recommended runtime hardening for your deployments:
 ```yaml
 services:
   app:
-    image: ghcr.io/sam-tech-lab-git/alpine-3.23:latest
+    image: ghcr.io/sam-tech-lab-oss/alpine-3.23:latest
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -342,13 +342,13 @@ Every image carries OCI provenance labels — the exact commit it was built from
 
 ```bash
 docker inspect --format '{{json .Config.Labels}}' \
-  ghcr.io/sam-tech-lab-git/alpine-3.23:latest | jq
+  ghcr.io/sam-tech-lab-oss/alpine-3.23:latest | jq
 ```
 
 Pin by digest to guarantee byte-for-byte reproducibility:
 
 ```bash
-docker pull ghcr.io/sam-tech-lab-git/alpine-3.23@sha256:<digest>
+docker pull ghcr.io/sam-tech-lab-oss/alpine-3.23@sha256:<digest>
 ```
 
 Each published image is signed. The signature establishes that the image was built by this
@@ -358,9 +358,9 @@ provenance attestation, on their own, do not show. Verify it with
 
 ```bash
 cosign verify \
-  --certificate-identity-regexp '^https://github.com/Sam-Tech-Lab-Git/Docker-Alpine-3.23/\.github/workflows/' \
+  --certificate-identity-regexp '^https://github.com/Sam-Tech-Lab-OSS/Docker-Alpine-3.23/\.github/workflows/' \
   --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
-  ghcr.io/sam-tech-lab-git/alpine-3.23@sha256:<digest>
+  ghcr.io/sam-tech-lab-oss/alpine-3.23@sha256:<digest>
 ```
 
 Both flags matter: without them Cosign only confirms that *a* signature exists, not that it is
@@ -444,7 +444,7 @@ Contributions are welcome: see [`CONTRIBUTING.md`](./CONTRIBUTING.md) and the
 
 ```bash
 # Lancer un shell (en tant qu'appuser, non privilégié)
-docker run -it --rm ghcr.io/sam-tech-lab-git/alpine-3.23:latest
+docker run -it --rm ghcr.io/sam-tech-lab-oss/alpine-3.23:latest
 
 # Ou depuis Docker Hub
 docker run -it --rm samtechlab/alpine-3.23:latest
@@ -453,7 +453,7 @@ docker run -it --rm samtechlab/alpine-3.23:latest
 Construire par-dessus :
 
 ```dockerfile
-FROM ghcr.io/sam-tech-lab-git/alpine-3.23:latest
+FROM ghcr.io/sam-tech-lab-oss/alpine-3.23:latest
 
 # L'image tourne en appuser : repasser en root pour installer, puis redescendre.
 USER root
@@ -510,8 +510,8 @@ utilisateur non-root, un socle système durci — puis elle vous laisse travaill
 |---|---|---|
 | Docker Hub | `samtechlab/alpine-3.23:latest` | amd64 + arm64 |
 | Docker Hub | `samtechlab/alpine-3.23:YYYY.MM` | amd64 + arm64 |
-| GHCR | `ghcr.io/sam-tech-lab-git/alpine-3.23:latest` | amd64 + arm64 |
-| GHCR | `ghcr.io/sam-tech-lab-git/alpine-3.23:YYYY.MM` | amd64 + arm64 |
+| GHCR | `ghcr.io/sam-tech-lab-oss/alpine-3.23:latest` | amd64 + arm64 |
+| GHCR | `ghcr.io/sam-tech-lab-oss/alpine-3.23:YYYY.MM` | amd64 + arm64 |
 
 Les tags pointent vers un manifeste multi-architecture : Docker sélectionne automatiquement
 l'image correspondant à la plateforme hôte. `latest` suit la reconstruction mensuelle.
@@ -573,7 +573,7 @@ Pour une image réellement figée, **épinglez par digest** — voir
 ### Lancer un conteneur
 
 ```bash
-docker run -it --rm ghcr.io/sam-tech-lab-git/alpine-3.23:latest
+docker run -it --rm ghcr.io/sam-tech-lab-oss/alpine-3.23:latest
 ```
 
 Vous obtenez un shell `bash` en tant que `appuser`. Aucun processus root ne tourne dans le
@@ -585,7 +585,7 @@ L'image se termine par `USER appuser` : **toute image dérivée doit donc repass
 installer des paquets**, puis redescendre :
 
 ```dockerfile
-FROM ghcr.io/sam-tech-lab-git/alpine-3.23:latest
+FROM ghcr.io/sam-tech-lab-oss/alpine-3.23:latest
 
 USER root
 RUN apk add --no-cache nginx
@@ -609,13 +609,13 @@ processus qui ne fait ni l'un ni l'autre laisse des zombies, ou ignore `SIGTERM`
 Si votre processus n'est pas prévu pour ce rôle, laissez Docker fournir un init minimal :
 
 ```bash
-docker run --init ghcr.io/sam-tech-lab-git/alpine-3.23:latest votre-commande
+docker run --init ghcr.io/sam-tech-lab-oss/alpine-3.23:latest votre-commande
 ```
 
 ```yaml
 services:
   app:
-    image: ghcr.io/sam-tech-lab-git/alpine-3.23:latest
+    image: ghcr.io/sam-tech-lab-oss/alpine-3.23:latest
     init: true
 ```
 
@@ -632,7 +632,7 @@ d'où les ajustements ci-dessous.
 
 `Dockerfile`
 ```dockerfile
-FROM ghcr.io/sam-tech-lab-git/alpine-3.23:latest
+FROM ghcr.io/sam-tech-lab-oss/alpine-3.23:latest
 
 USER root
 RUN apk add --no-cache nginx && \
@@ -705,7 +705,7 @@ Durcissement recommandé à l'exécution pour vos déploiements :
 ```yaml
 services:
   app:
-    image: ghcr.io/sam-tech-lab-git/alpine-3.23:latest
+    image: ghcr.io/sam-tech-lab-oss/alpine-3.23:latest
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -741,13 +741,13 @@ de construction :
 
 ```bash
 docker inspect --format '{{json .Config.Labels}}' \
-  ghcr.io/sam-tech-lab-git/alpine-3.23:latest | jq
+  ghcr.io/sam-tech-lab-oss/alpine-3.23:latest | jq
 ```
 
 Figez par digest pour garantir une reproductibilité au bit près :
 
 ```bash
-docker pull ghcr.io/sam-tech-lab-git/alpine-3.23@sha256:<digest>
+docker pull ghcr.io/sam-tech-lab-oss/alpine-3.23@sha256:<digest>
 ```
 
 Chaque image publiée est signée. La signature établit que l'image a été construite par le workflow
@@ -757,9 +757,9 @@ provenance, seuls, ne montrent pas. Vérifiez-la avec
 
 ```bash
 cosign verify \
-  --certificate-identity-regexp '^https://github.com/Sam-Tech-Lab-Git/Docker-Alpine-3.23/\.github/workflows/' \
+  --certificate-identity-regexp '^https://github.com/Sam-Tech-Lab-OSS/Docker-Alpine-3.23/\.github/workflows/' \
   --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
-  ghcr.io/sam-tech-lab-git/alpine-3.23@sha256:<digest>
+  ghcr.io/sam-tech-lab-oss/alpine-3.23@sha256:<digest>
 ```
 
 Les deux options comptent : sans elles, Cosign confirme seulement qu'*une* signature existe, pas
@@ -842,7 +842,7 @@ Ces images sont reconstruites chaque mois, signées, analysées et documentées.
 est mené au grand jour et mis à disposition — le parrainage est ce qui en maintient le
 rythme.
 
-[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa.svg?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/Sam-Tech-Lab-Git)
+[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa.svg?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/Sam-Tech-Lab-OSS)
 
 ---
 
