@@ -24,20 +24,15 @@
 <a href="https://hub.docker.com/r/samtechlab/alpine-3.23"><img src="https://img.shields.io/docker/stars/samtechlab/alpine-3.23?style=for-the-badge"/></a>
 <img src="https://img.shields.io/badge/Alpine-3.23-0D597F?style=for-the-badge&logo=ubuntu&logoColor=white"/>
 <img src="https://img.shields.io/badge/Multi--Arch-amd64%20%7C%20arm64-success?style=for-the-badge"/>
+<a href="https://github.com/Sam-Tech-Lab-OSS" target="_blank"><img src="https://img.shields.io/static/v1?label=SamTechLab&message=GitHub&color=94398d&labelColor=555555&style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/></a>
+<a href="https://github.com/sponsors/Sam-Tech-Lab-OSS" target="_blank"><img src="https://img.shields.io/badge/Sponsor-GitHub-ea4aaa.svg?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="Sponsor"/></a>
+<a href="https://github.com/Sam-Tech-Lab-OSS/Docker-Alpine-3.23/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge" alt="License: Apache 2.0"/></a>
 </p>
 
 ---
 
 <p align="center">
-  <a href="https://github.com/Sam-Tech-Lab-OSS" target="_blank">
-    <img src="https://img.shields.io/static/v1?label=SamTechLab&message=GitHub&color=94398d&labelColor=555555&style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
-  </a>
-  <a href="https://github.com/sponsors/Sam-Tech-Lab-OSS" target="_blank">
-    <img src="https://img.shields.io/badge/Sponsor-GitHub-ea4aaa.svg?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="Sponsor"/>
-  </a>
-  <a href="https://github.com/Sam-Tech-Lab-OSS/Docker-Alpine-3.23/blob/main/LICENSE" target="_blank">
-    <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge" alt="License: Apache 2.0"/>
-  </a>
+
   <a href="https://github.com/Sam-Tech-Lab-OSS/Docker-Alpine-3.23/actions/workflows/build-multi-arch.yml" target="_blank">
       <img src="https://github.com/Sam-Tech-Lab-OSS/Docker-Alpine-3.23/actions/workflows/build-multi-arch.yml/badge.svg" alt="Build multi-arch"/>
   </a>
