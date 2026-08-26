@@ -19,6 +19,11 @@ env:
 
   GHCR_IMAGE: ghcr.io/sam-tech-lab-oss/alpine-3.23
   DOCKERHUB_IMAGE: samtechlab/alpine-3.23
+  AUTHORS: Sam Tech Lab
+  TITLE: Alpine 3.23 Base
+  DESCRIPTION: Image Alpine 3.23 légère, durcie et multi-architecture
+  VERSION: "3.23"
+  LICENSES: Apache-2.0
 
 jobs:
   lint:
@@ -224,18 +229,24 @@ jobs:
           push: true
           sbom: true
           provenance: mode=max
+          annotations: |
+            index:org.opencontainers.image.description=${{ env.DESCRIPTION }}
+            index:org.opencontainers.image.title=${{ env.TITLE }}
+            index:org.opencontainers.image.version=${{ env.VERSION }}
+            index:org.opencontainers.image.licenses=${{ env.LICENSES }}
+            index:org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
           build-args: |
             BUILD_DATE=${{ steps.version.outputs.build_date }}
             REPO_URL=https://github.com/${{ github.repository }}
-            AUTHORS=Sam Tech Lab
-            TITLE=Alpine 3.23 Base
-            DESCRIPTION=Image Alpine 3.23 légère, durcie et multi-architecture
-            VERSION=3.23
-            LICENSES=Apache-2.0
+            AUTHORS=${{ env.AUTHORS }}
+            TITLE=${{ env.TITLE }}
+            DESCRIPTION=${{ env.DESCRIPTION }}
+            VERSION=${{ env.VERSION }}
+            LICENSES=${{ env.LICENSES }}
           tags: ${{ steps.tags.outputs.list }}
           labels: |
             org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.vendor=Sam Tech Lab
+            org.opencontainers.image.vendor=${{ env.AUTHORS }}
             org.opencontainers.image.url=https://github.com/${{ github.repository }}
 
       - name: Le manifeste publié couvre les deux architectures
