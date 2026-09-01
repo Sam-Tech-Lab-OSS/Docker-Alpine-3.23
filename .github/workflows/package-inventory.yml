@@ -111,10 +111,17 @@ jobs:
               echo "::error::Rebase impossible sur main."
               exit 1
             fi
-            if git push --quiet origin HEAD:refs/heads/main; then
+
+            if git push origin HEAD:refs/heads/main 2>&1 | tee "${RUNNER_TEMP}/poussee.log"; then
               echo "PACKAGES.md publié sur main (${NOMBRE} paquets)."
               exit 0
             fi
+
+            if grep -qE 'GH006|protected branch' "${RUNNER_TEMP}/poussee.log"; then
+              echo "::error::main est protégée : GITHUB_TOKEN n'a pas le droit d'y pousser. Accordez une dérogation à l'application GitHub Actions dans la règle de protection, ou retirez ce workflow et gardez l'inventaire dans la release."
+              exit 1
+            fi
+
             echo "Poussée refusée (essai ${essai}/3)."
             sleep $(( essai * 5 ))
           done
