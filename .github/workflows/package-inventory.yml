@@ -1,0 +1,123 @@
+name: Inventaire des paquets
+
+on:
+  workflow_run:
+    workflows:
+      - "Build & Push - multi-arch"
+    types:
+      - completed
+  workflow_dispatch:
+
+concurrency:
+  group: inventaire-paquets
+  cancel-in-progress: false
+
+env:
+  IMAGE: ghcr.io/sam-tech-lab-oss/alpine-3.23
+
+jobs:
+  inventorier:
+    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event != 'pull_request' && github.event.workflow_run.head_branch == 'main') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: write
+      packages: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - name: Relever l'inventaire sur l'image publiée
+        id: releve
+        run: |
+          set -euo pipefail
+
+          docker pull -q "${IMAGE}:latest"
+
+          DIGEST=$(docker image inspect --format '{{index .RepoDigests 0}}' "${IMAGE}:latest" | cut -d@ -f2)
+          VERSION=$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.version"}}' "${IMAGE}:latest")
+          CREE=$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.created"}}' "${IMAGE}:latest")
+
+          docker run --rm "${IMAGE}@${DIGEST}" apk info -v \
+            | sed -E 's/-([^-]+-r[0-9]+)$/\t\1/' \
+            | LC_ALL=C sort > "${RUNNER_TEMP}/paquets.tsv"
+
+          NOMBRE=$(wc -l < "${RUNNER_TEMP}/paquets.tsv")
+          echo "paquets relevés : ${NOMBRE}"
+
+          test "${NOMBRE}" -gt 0
+
+          if ! awk -F'\t' 'NF != 2 { exit 1 }' "${RUNNER_TEMP}/paquets.tsv"; then
+            echo "::error::Au moins une ligne de l'inventaire n'a pas pu être découpée en nom + version."
+            awk -F'\t' 'NF != 2' "${RUNNER_TEMP}/paquets.tsv" >&2
+            exit 1
+          fi
+
+          {
+            echo "digest=${DIGEST}"
+            echo "version=${VERSION}"
+            echo "cree=${CREE}"
+            echo "nombre=${NOMBRE}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Publier PACKAGES.md
+        env:
+          DIGEST: ${{ steps.releve.outputs.digest }}
+          VERSION: ${{ steps.releve.outputs.version }}
+          CREE: ${{ steps.releve.outputs.cree }}
+          NOMBRE: ${{ steps.releve.outputs.nombre }}
+        run: |
+          set -euo pipefail
+
+          {
+            echo "# Paquets installés"
+            echo
+            echo "Fichier généré automatiquement après chaque publication."
+            echo "Ne le modifiez pas à la main : il est réécrit au relevé suivant."
+            echo
+            echo "- **Image** : \`${IMAGE}\`"
+            echo "- **Version** : \`${VERSION}\`"
+            echo "- **Digest** : \`${DIGEST}\`"
+            echo "- **Construite le** : ${CREE}"
+            echo "- **Architecture relevée** : \`linux/amd64\`"
+            echo "- **Paquets** : ${NOMBRE}"
+            echo
+            echo "Les deux architectures publiées partagent les mêmes versions de"
+            echo "paquets ; seuls les binaires diffèrent."
+            echo
+            echo "| Paquet | Version |"
+            echo "| --- | --- |"
+            awk -F'\t' '{ printf "| %s | `%s` |\n", $1, $2 }' "${RUNNER_TEMP}/paquets.tsv"
+          } > PACKAGES.md
+
+          if [ -z "$(git status --porcelain -- PACKAGES.md)" ]; then
+            echo "Inventaire inchangé depuis le dernier relevé : rien à commiter."
+            exit 0
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add PACKAGES.md
+          git commit -m "Mettre à jour l'inventaire des paquets (${VERSION}, ${NOMBRE} paquets)"
+
+          for essai in 1 2 3; do
+            git fetch --quiet origin main
+            if ! git rebase --quiet FETCH_HEAD; then
+              git rebase --abort
+              echo "::error::Rebase impossible sur main."
+              exit 1
+            fi
+            if git push --quiet origin HEAD:refs/heads/main; then
+              echo "PACKAGES.md publié sur main (${NOMBRE} paquets)."
+              exit 0
+            fi
+            echo "Poussée refusée (essai ${essai}/3)."
+            sleep $(( essai * 5 ))
+          done
+
+          echo "::error::PACKAGES.md n'a pas pu être poussé sur main."
+          exit 1
