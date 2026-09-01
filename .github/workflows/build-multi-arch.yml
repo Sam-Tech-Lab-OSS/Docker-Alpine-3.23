@@ -8,7 +8,7 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    - cron: "0 1 1 * *" # chaque 1er du mois à 01h00 UTC
+    - cron: "15 1 1 * *" # chaque 1er du mois à 01h15 UTC
   workflow_dispatch:
 
 concurrency:
@@ -298,6 +298,23 @@ jobs:
             "${GHCR_IMAGE}@${DIGEST}" > /dev/null
           echo "Signature vérifiée sur ${GHCR_IMAGE}@${DIGEST}."
 
+      - name: Relever l'inventaire des paquets publiés
+        id: paquets
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          set -euo pipefail
+
+          docker run --rm "${GHCR_IMAGE}@${DIGEST}" \
+            apk info -v | sort > "${RUNNER_TEMP}/paquets.txt"
+
+          NOMBRE=$(wc -l < "${RUNNER_TEMP}/paquets.txt")
+          echo "paquets relevés : ${NOMBRE}"
+
+          test "${NOMBRE}" -gt 0
+
+          echo "nombre=${NOMBRE}" >> "$GITHUB_OUTPUT"
+
       - name: Consigner la publication du mois
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -308,6 +325,7 @@ jobs:
           COMMIT: ${{ github.sha }}
           RUN_ID: ${{ github.run_id }}
           HUB: ${{ steps.dockerhub.outputs.available }}
+          NOMBRE: ${{ steps.paquets.outputs.nombre }}
         run: |
           {
             echo "Publication du ${BUILD_DATE}, construite depuis ${COMMIT}."
@@ -326,6 +344,14 @@ jobs:
             echo "La procédure de vérification figure dans le README."
             echo
             echo "[Exécution du build](https://github.com/${DEPOT}/actions/runs/${RUN_ID})"
+            echo
+            echo "<details><summary>Paquets installés (${NOMBRE}) — relevé sur linux/amd64</summary>"
+            echo
+            echo '```'
+            cat "${RUNNER_TEMP}/paquets.txt"
+            echo '```'
+            echo
+            echo "</details>"
           } > "${RUNNER_TEMP}/corps-release.md"
 
           CHARGE=$(jq -n --arg tag "${TAG}" --rawfile corps "${RUNNER_TEMP}/corps-release.md" \
