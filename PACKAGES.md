@@ -1,19 +1,25 @@
-# Paquets installés
+# Installed packages / Paquets installés
 
-Fichier généré automatiquement après chaque publication.
-Ne le modifiez pas à la main : il est réécrit au relevé suivant.
+Generated automatically after each publication. Do not edit by
+hand: it is overwritten by the next run.
+
+*Fichier généré automatiquement après chaque publication. Ne le
+modifiez pas à la main : il est réécrit au relevé suivant.*
 
 - **Image** : `ghcr.io/sam-tech-lab-oss/alpine-3.23`
 - **Version** : `3.23`
 - **Digest** : `sha256:aa20bb514a3e0d20988c1b9d94f1922a209981c880d8134831d1ecd11381ace8`
-- **Construite le** : 2026-09-01T11:35:10Z
-- **Architecture relevée** : `linux/amd64`
-- **Paquets** : 47
+- **Built / Construite le** : 2026-09-01T11:35:10Z
+- **Architecture surveyed / Architecture relevée** : `linux/amd64`
+- **Packages / Paquets** : 47
 
-Les deux architectures publiées partagent les mêmes versions de
-paquets ; seuls les binaires diffèrent.
+Both published architectures share the same package versions;
+only the binaries differ.
 
-| Paquet | Version |
+*Les deux architectures publiées partagent les mêmes versions de
+paquets ; seuls les binaires diffèrent.*
+
+| Package / Paquet | Version |
 | --- | --- |
 | acl-libs | `2.3.2-r1` |
 | alpine-baselayout | `3.7.2-r0` |
