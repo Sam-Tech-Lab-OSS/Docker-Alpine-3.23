@@ -22,14 +22,21 @@ jobs:
     timeout-minutes: 15
 
     permissions:
-      contents: write
-      packages: read
+      contents: read
 
     steps:
+      - name: Générer un jeton d'application
+        id: jeton
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Checkout
         uses: actions/checkout@v7
         with:
           ref: main
+          token: ${{ steps.jeton.outputs.token }}
 
       - name: Relever l'inventaire sur l'image publiée
         id: releve
@@ -66,6 +73,8 @@ jobs:
 
       - name: Publier PACKAGES.md
         env:
+          GH_TOKEN: ${{ steps.jeton.outputs.token }}
+          APP_SLUG: ${{ steps.jeton.outputs.app-slug }}
           DIGEST: ${{ steps.releve.outputs.digest }}
           VERSION: ${{ steps.releve.outputs.version }}
           CREE: ${{ steps.releve.outputs.cree }}
@@ -99,8 +108,11 @@ jobs:
             exit 0
           fi
 
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          AUTEUR="${APP_SLUG}[bot]"
+          ID=$(gh api "/users/${AUTEUR}" --jq .id)
+          git config user.name "${AUTEUR}"
+          git config user.email "${ID}+${AUTEUR}@users.noreply.github.com"
+
           git add PACKAGES.md
           git commit -m "Mettre à jour l'inventaire des paquets (${VERSION}, ${NOMBRE} paquets)"
 
@@ -111,10 +123,17 @@ jobs:
               echo "::error::Rebase impossible sur main."
               exit 1
             fi
-            if git push --quiet origin HEAD:refs/heads/main; then
+
+            if git push origin HEAD:refs/heads/main 2>&1 | tee "${RUNNER_TEMP}/poussee.log"; then
               echo "PACKAGES.md publié sur main (${NOMBRE} paquets)."
               exit 0
             fi
+
+            if grep -qE 'GH006|protected branch' "${RUNNER_TEMP}/poussee.log"; then
+              echo "::error::main est protégée et l'application ${APP_SLUG} n'est pas dans la liste de dérogation du ruleset. Settings → Rules → Rulesets → Bypass list → Add bypass → onglet Apps."
+              exit 1
+            fi
+
             echo "Poussée refusée (essai ${essai}/3)."
             sleep $(( essai * 5 ))
           done
